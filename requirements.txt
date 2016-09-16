@@ -1,2 +1,2 @@
 PyYAML==3.12
-future
+future==0.15.2
