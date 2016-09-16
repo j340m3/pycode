@@ -177,5 +177,22 @@ class TestDecorator(unittest.TestCase):
         self.assertIsInstance(a(),A)
         self.assertEqual(repr(a),repr(A))
 
+    def test_inheritance_in_class_decorator(self):
+        class A:
+            def a(self):
+                return 2
+        class B(A):
+            def b(self):
+                return 3
+        b = Decorator.create_wrapping_class(B)
+        class C(b):
+            def c(self):
+                return 4
+        self.assertEqual(b().b(),3)
+        self.assertEqual(b().a(),2)
+        self.assertEqual(C().b(),3)
+        self.assertTrue(issubclass(C,B))
+        self.assertTrue(issubclass(C,A))
+
 if __name__ == "__main__":
     unittest.main()
