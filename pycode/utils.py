@@ -22,8 +22,6 @@ class Decorator:
 
     def __call__(self, *args, **kwargs):
         if args and callable(args[0]):
-            if self.decoree == args[0]:
-                return self.decoree(*args,**kwargs)
             self.decoree = args[0]
             return self.decoree
         elif self.decoree:
