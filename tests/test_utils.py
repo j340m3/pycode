@@ -170,7 +170,7 @@ class TestDecorator(unittest.TestCase):
         class A(object):
             def __str__(self):
                 return "Bla"
-        a = Decorator.create_wrapping_class(A)
+        a = Decorator.create_wrapping_class(A,{})
         self.assertEqual(str(a()),"Bla")
         self.assertEqual(a().__class__.__name__,"A")
         self.assertEqual(repr(a()).split("at 0x")[0],repr(A()).split("at 0x")[0])
@@ -184,7 +184,7 @@ class TestDecorator(unittest.TestCase):
         class B(A):
             def b(self):
                 return 3
-        b = Decorator.create_wrapping_class(B)
+        b = Decorator.create_wrapping_class(B,{})
         class C(b):
             def c(self):
                 return 4

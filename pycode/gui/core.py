@@ -9,7 +9,7 @@ elif version_info[0] == 3:
     from tkinter import filedialog
 from pycode import persistance
 
-class Mainframe:
+class MainFrame:
     def __init__(self, widgets):
         self.widgets = widgets
         self.tk = tk.Tk()
@@ -95,3 +95,5 @@ class Mainframe:
         for category in self.open_files:
             self.open_files[category].close()
         self.tk.quit()
+
+

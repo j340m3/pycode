@@ -3,6 +3,9 @@ class Decorator:
         self.decoree = None
         self.newargs = args
         self.newkwargs = kwargs
+        self.decorators = {}
+        if "decorators" in self.newkwargs:
+            self.decorators = self.newargs["decorators"]
         if args:
             if isinstance(args[0],type):
                 self.decoree = args[0]
@@ -23,13 +26,16 @@ class Decorator:
     def __call__(self, *args, **kwargs):
         if args and callable(args[0]):
             self.decoree = args[0]
+            if isinstance(self.decoree,type):
+                return self.create_wrapping_class(self.decoree, self.decorators)
             return self.decoree
         elif self.decoree:
+            if isinstance(self.decoree,type):
+                return self.create_wrapping_class(args[0],self.decorators)(*args,**kwargs)
             return self.decoree(*args,**kwargs)
 
-
     @staticmethod
-    def create_wrapping_class(cls):
+    def create_wrapping_class(cls,decorators):
         from future.utils import with_metaclass
         class MetaNewClass(type):
             def __repr__(self):
@@ -44,10 +50,15 @@ class Decorator:
                     return cls
                 obj = super(NewClass, self).__getattribute__(attr_name)
                 if hasattr(obj, '__call__'):
+                    if attr_name in decorators:
+                        for decorator in decorators:
+                            obj = decorator(obj)
+                    elif "*" in decorators:
+                        for decorator in decorators:
+                            obj = decorator(obj)
                     return obj
                 return obj
             def __repr__(self):
                 return repr(self.__instance)
         return NewClass
-
 
