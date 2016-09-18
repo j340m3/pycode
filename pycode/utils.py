@@ -14,6 +14,7 @@ class Decorator:
         return self
 
     def __init__(self,*args,**kwargs):
+        self.decoree = None
         self.initargs = args
         self.initkwargs = kwargs
         if args and callable(args[0]):
@@ -21,11 +22,13 @@ class Decorator:
 
     def __call__(self, *args, **kwargs):
         if args and callable(args[0]):
+            if self.decoree == args[0]:
+                return self.decoree(*args,**kwargs)
             self.decoree = args[0]
-        if not callable(self.decoree):
             return self.decoree
         elif self.decoree:
             return self.decoree(*args,**kwargs)
+
 
     @staticmethod
     def create_wrapping_class(cls):

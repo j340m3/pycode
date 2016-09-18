@@ -167,7 +167,7 @@ class TestDecorator(unittest.TestCase):
 
     def test_class_decorator(self):
 
-        class A:
+        class A(object):
             def __str__(self):
                 return "Bla"
         a = Decorator.create_wrapping_class(A)
@@ -178,7 +178,7 @@ class TestDecorator(unittest.TestCase):
         self.assertEqual(repr(a),repr(A))
 
     def test_inheritance_in_class_decorator(self):
-        class A:
+        class A(object):
             def a(self):
                 return 2
         class B(A):
