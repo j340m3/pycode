@@ -17,6 +17,9 @@ pycode
 :target: https://pyup.io/repos/github/j340m3/pycode/
      :alt: Updates
 
+.. image:: https://coveralls.io/repos/github/j340m3/pycode/badge.svg
+:target: https://coveralls.io/github/j340m3/pycode
+    
 
 Python tool for research programmation
 
