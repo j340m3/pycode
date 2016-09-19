@@ -1,11 +1,12 @@
 from pycode.gui.core import MainFrame
 from pycode.gui.widgets import TrueFalseWidget
 from pycode.gui.dialogs import NameDialog
+from pycode.gui.dialogs import FileDialog
 from pycode.persistence import open_file
 
 
 if __name__ == "__main__":
-    open_file()
+    file = FileDialog()
     widgets = [TrueFalseWidget("Has the question been answered?"),
            TrueFalseWidget("Is the answer correct?"), ]
     w = MainFrame(widgets)
