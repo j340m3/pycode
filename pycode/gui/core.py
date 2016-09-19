@@ -7,7 +7,8 @@ elif version_info[0] == 3:
     # We are using Python 3.x
     import tkinter as tk
     from tkinter import filedialog
-from pycode import persistance
+from pycode import persistence
+from pycode.gui.dialogs import NameDialog
 
 class MainFrame:
     def __init__(self, widgets):
@@ -26,10 +27,7 @@ class MainFrame:
         self.showResults("<No file loaded!>", "<Please open a file!>")
         self.act = None
         self.prev = []
-        try:
-            self.tk.mainloop()
-        except Exception as e:
-            print(e)
+        self.user = None
 
     def init(self):
         #Show NameDialog
@@ -43,7 +41,7 @@ class MainFrame:
 
         fileMenu = tk.Menu(menubar)
 
-        fileMenu.add_command(label="Open", command=persistance.open_file)
+        fileMenu.add_command(label="Open", command=persistence.open_file)
         fileMenu.add_command(label="Save", command=self.save_file)
 
         fileMenu.add_separator()
@@ -58,8 +56,6 @@ class MainFrame:
         self.a.grid(column=2, row=2, sticky=tk.NSEW, columnspan=1)
 
     def init_content(self):
-        self.tk.style = tk.Style()
-        self.tk.style.theme_use("default")
         for i, j in enumerate(self.widgets):
             j.draw(self.tk, i + 3)
         self.tk.grid_rowconfigure(0, weight=1)
@@ -96,4 +92,5 @@ class MainFrame:
             self.open_files[category].close()
         self.tk.quit()
 
-
+    def start(self):
+        self.tk.mainloop()
