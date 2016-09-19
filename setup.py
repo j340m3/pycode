@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 with open('README.rst') as readme_file:
     readme = readme_file.read()
@@ -26,9 +26,7 @@ setup(
     author="Jerome Bergmann",
     author_email='jerome.bergmann@rwth-aachen.de',
     url='https://github.com/j340m3/pycode',
-    packages=[
-        'pycode',
-    ],
+    packages=find_packages(),
     package_dir={'pycode':
                      'pycode'},
     entry_points={

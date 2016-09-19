@@ -23,3 +23,4 @@ class TrueFalseWidget(MyWidget):
         self.widget.grid(column=1, row=line, sticky=tk.NSEW)
         self.labelw = tk.Label(root, text=self.label, justify=tk.LEFT)
         self.labelw.grid(column=2, row=line, sticky=tk.NSEW)
+
