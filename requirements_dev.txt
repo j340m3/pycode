@@ -9,4 +9,4 @@ Sphinx==1.4.5
 cryptography==1.5
 PyYAML==3.12
 pytest==3.0.2
-future
+future==0.15.2
