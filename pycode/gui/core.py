@@ -10,7 +10,7 @@ elif version_info[0] == 3:
 from pycode import persistence
 from pycode.gui.dialogs import NameDialog
 
-class MainFrame:
+class MainFrame: #pragma no cover
     def __init__(self, widgets):
         self.widgets = widgets
         self.tk = tk.Tk()
