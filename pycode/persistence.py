@@ -1,7 +1,6 @@
 from itertools import (takewhile,repeat)
 import os
 
-
 def obtain(filename):
     with open(filename, 'r') as file:
         categories = []
