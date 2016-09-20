@@ -7,6 +7,8 @@ import PyYAML
 
 
 if __name__ == "__main__":
+
+
     widgets = [TrueFalseWidget("Has the question been answered?"),
            TrueFalseWidget("Is the answer correct?"), ]
     w = MainFrame(widgets)

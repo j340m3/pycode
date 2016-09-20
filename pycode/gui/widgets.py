@@ -24,3 +24,18 @@ class TrueFalseWidget(MyWidget):
         self.labelw = tk.Label(root, text=self.label, justify=tk.LEFT)
         self.labelw.grid(column=2, row=line, sticky=tk.NSEW)
 
+class ScaleWidget(tk.Frame):
+    def __init__(self,master,label,min_,max_,redundancy=1):
+        super(ScaleWidget,self).__init__(master)
+        self.min = min_
+        self.max = max_
+        self.variables = [tk.Entry(master) for i in range(redundancy+1)]
+        self.label = tk.Label(master, text=label)
+
+        self.variables[0].pack(side=tk.LEFT)
+        self.label.pack(side=tk.LEFT)
+        for i in self.variables[1:]:
+            print(i)
+            i.pack(side=tk.LEFT)
+
+
