@@ -29,13 +29,12 @@ class ScaleWidget(tk.Frame):
         super(ScaleWidget,self).__init__(master)
         self.min = min_
         self.max = max_
-        self.variables = [tk.Entry(master) for i in range(redundancy+1)]
+        self.variables = [tk.Entry(master,width=2) for i in range(redundancy+1)]
         self.label = tk.Label(master, text=label)
 
-        self.variables[0].pack(side=tk.LEFT)
-        self.label.pack(side=tk.LEFT)
+        self.variables[0].pack(side=tk.LEFT,in_=self)
+        self.label.pack(side=tk.LEFT,in_=self)
         for i in self.variables[1:]:
-            print(i)
-            i.pack(side=tk.LEFT)
+            i.pack(side=tk.LEFT,in_=self)
 
 

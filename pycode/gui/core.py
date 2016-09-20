@@ -111,7 +111,7 @@ class MainApplication(tk.Frame):
         self.statusbar.pack(side="bottom", fill="x")
         #self.toolbar.pack(side="top", fill="x")
         #self.navbar.pack(side="left", fill="y")
-        self.main.pack(side="top", fill="both", expand=True)
+        self.main.pack(side="top", fill="both", expand=1)
 
     def add_callback(self,name,function):
         callbacks = self.get_callbacks(name)
@@ -193,7 +193,7 @@ class Main(tk.Frame):
         for i in x:
             self.widgets.append(ScaleWidget(master,i["label"],i["min"],i["max"],))
         for i in self.widgets:
-            i.pack(side=tk.TOP)
+            i.pack()
 
 if __name__ == "__main__":
     root = tk.Tk()
