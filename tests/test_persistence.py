@@ -5,7 +5,7 @@ class TestPersistence(unittest.TestCase):
     def test_all(self):
         samples = [
             {"x":1,"y":2,"z":3},
-            {"x":4,"y":5,"z":6},
+            {"x":4,"y":5,"z":""},
         ]
         try:
             persist("test.txt",samples[0],"w+")

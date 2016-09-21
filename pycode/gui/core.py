@@ -1,4 +1,5 @@
-import os
+import yaml
+import logging
 from sys import version_info
 if version_info[0] == 2:
     # We are using Python 2.x
@@ -10,7 +11,7 @@ elif version_info[0] == 3:
     import tkinter as tk
     from tkinter import ttk
     from tkinter import filedialog
-from pycode import persistence
+from pycode import persistence, utils
 from pycode.gui.widgets import ScaleWidget
 
 class MainFrame: #pragma no cover
@@ -102,16 +103,16 @@ class MainApplication(tk.Frame):
     def __init__(self, parent, *args, **kwargs):
         tk.Frame.__init__(self, parent, *args, **kwargs)
         self.parent = parent
-        self.statusbar = StatusBar(self)
-        self.toolbar = ToolBar(parent)
-        self.navbar = NavBar(self)
-        self.main = Main(self)
         self.callbacks = {}
+        self.statusbar = StatusBar(self)
+        self.toolbar = ToolBar(parent,self)
+        self.navbar = NavBar(self)
+        self.main = Main(self,"config.yml","jerome.txt")
 
         self.statusbar.pack(side="bottom", fill="x")
         #self.toolbar.pack(side="top", fill="x")
-        #self.navbar.pack(side="left", fill="y")
-        self.main.pack(side="top", fill="both", expand=1)
+        self.navbar.pack(side="bottom", anchor="se")
+        self.main.pack(side="top", expand=True) #fill removed
 
     def add_callback(self,name,function):
         callbacks = self.get_callbacks(name)
@@ -122,8 +123,15 @@ class MainApplication(tk.Frame):
         return self.callbacks.get(name,[])
 
     def handle_callback(self,name):
-        for i in self.get_callbacks(name):
-            i()
+        if self.get_callbacks(name):
+            for i in self.get_callbacks(name):
+                i()
+        else:
+            self.notice("".join(["The event ",name," has been unhandled!"]))
+
+    def notice(self,string):
+        logging.log(logging.INFO,string)
+        self.statusbar.variable.set(string)
 
 class StatusBar(tk.Frame):
     def __init__(self, master):
@@ -136,64 +144,191 @@ class StatusBar(tk.Frame):
         self.label.pack(fill=tk.X)
 
 class NavBar(tk.Frame):
-    def __init__(self, master, path="."):
+    def __init__(self, master):
 
         tk.Frame.__init__(self, master)
-        self.tree = ttk.Treeview(self)
-        ysb = ttk.Scrollbar(self, orient='vertical', command=self.tree.yview)
-        xsb = ttk.Scrollbar(self, orient='horizontal', command=self.tree.xview)
-        self.tree.configure(yscroll=ysb.set, xscroll=xsb.set)
-        self.tree.heading('#0', text=path, anchor='w')
-
-        abspath = os.path.abspath(path)
-        root_node = self.tree.insert('', 'end', text=abspath, open=True)
-        self.process_directory(root_node, abspath)
-        #
-        # self.tree.grid(row=0, column=0)
-        # ysb.grid(row=0, column=1, sticky='ns')
-        # xsb.grid(row=1, column=0, sticky='ew')
-        # self.grid()
-
-        ysb.pack(side=tk.RIGHT,fill=tk.BOTH)
-        xsb.pack(fill=tk.BOTH,side=tk.BOTTOM)
-        self.tree.pack(fill=tk.Y,expand=1)
-
-    def process_directory(self, parent, path):
-
-        for p in os.listdir(path):
-            abspath = os.path.join(path, p)
-            isdir = os.path.isdir(abspath)
-            oid = self.tree.insert(parent, 'end', text=p, open=False)
-            if isdir:
-                self.process_directory(oid, abspath)
+        self.next = tk.Button(text="Next >",command=lambda: master.handle_callback("next"))
+        self.prev = tk.Button(text="< Previous",command=lambda: master.handle_callback("prev"))
+        self.prev.grid(column=0,row=0,in_=self,pady=5)
+        self.next.grid(column=1,row=0,in_=self,padx=5,pady=5)
 
 class ToolBar(tk.Menu):
-    def __init__(self,master):
+    def __init__(self,master,handler):
         tk.Menu.__init__(self,master)
         master.config(menu=self)
 
-        fileMenu = tk.Menu(self)
+        fileMenu = tk.Menu(self,tearoff=False)
 
-        fileMenu.add_command(label="Open", command=lambda: master.handle_callback("open"))
-        fileMenu.add_command(label="Save", command=lambda: master.handle_callback("save"))
+        fileMenu.add_command(label="Open", command=lambda: handler.handle_callback("open"))
+        fileMenu.add_command(label="Save", command=lambda: handler.handle_callback("save"))
 
         fileMenu.add_separator()
 
-        fileMenu.add_command(label="Exit", underline=0, command=lambda: master.handle_callback("exit"))
+        fileMenu.add_command(label="Exit", underline=0, command=lambda: handler.handle_callback("exit"))
         self.add_cascade(label="File", underline=0, menu=fileMenu)
 
 class Main(tk.Frame):
+    def __init__(self,master,paper,data):
+        tk.Frame.__init__(self,master)
+        master.add_callback("next",lambda: Main.get_next(self))
+        self.master = master
+        # Get paper information
+        ci = None
+        with open(paper) as stream:
+            ci = yaml.load(stream)
+        self.questions = ci["questions"]
+        self.title = ci["title"]
+        self.order = ci["order"]
+        self.show = ci["show"]
+        self.user = ci["user"]
+
+        # Get Data
+        self.data = persistence.obtain(data)
+
+        self.infofield = InfoField(self)
+        self.infofield.grid(row=0)
+        self.widgetfield = WidgetField(self,{})
+
+        self.current_question_index = 0
+        self.current_answerer_index = 0
+        self.start()
+
+    def start(self):
+        self.infofield.title = self.title
+        # Pick question + solution
+
+        # Build and display
+        self.infofield.question = self.questions[self.current_question_index]["text"]
+        self.infofield.answer = self.data[self.current_answerer_index][self.infofield.question]
+
+        self.widgetfield = WidgetField(self,self.questions[self.current_question_index]["coding"])
+        self.widgetfield.show()
+        self.widgetfield.grid(row=1)
+        # self.widgets =[]
+        # for i in x:
+        #     self.widgets.append(ScaleWidget(master,i["label"],i["min"],i["max"]))
+        # for i,element in enumerate(self.widgets):
+        #     element.variables[0].grid(column=0,row=i,in_=self)
+        #     element.label.grid(column=1,row=i,in_=self)
+        #     index = 2
+        #     for k,j in enumerate(element.variables[1:]):
+        #         j.grid(column=index+k,row=i,in_=self)
+
+    def get_next(self):
+        #store previous
+        used = [i["text"] for i in self.questions]
+        sample = {i:self.data[self.current_answerer_index][i] for i in self.data[self.current_answerer_index]
+                  if i not in used}
+        sample["question"] = self.questions[self.current_question_index]["text"]
+
+        sample = {**sample,**self.widgetfield.get_res_dict()}
+        persistence.persist("out.txt",sample,"a+")
+
+
+        self.current_answerer_index = self.current_answerer_index + 1
+        if self.current_answerer_index >= len(self.data):
+            self.current_answerer_index = 0
+            self.current_question_index = self.current_question_index + 1
+        if self.current_question_index >= len(self.questions):
+            self.infofield.question = "Finished"
+            self.infofield.answer = "You may now leave"
+        else:
+            self.infofield.question = self.questions[self.current_question_index]["text"]
+            if self.infofield.question in self.data[self.current_answerer_index]:
+                self.infofield.answer = self.data[self.current_answerer_index][self.infofield.question]
+            else:
+                best = -1
+                element = None
+                for i in self.data[self.current_answerer_index]:
+                    res = utils.lcs(i,self.infofield.question)
+                    if len(res) > best:
+                        element = i
+                        best = len(res)
+                self.infofield.answer = self.data[self.current_answerer_index][element]
+            self.widgetfield.grid_forget()
+            self.widgetfield.destroy()
+            self.widgetfield = WidgetField(self,self.questions[self.current_question_index]["coding"])
+            self.widgetfield.show()
+            self.widgetfield.grid(row=1)
+
+class InfoField(tk.Frame):
     def __init__(self,master):
         tk.Frame.__init__(self,master)
-        x = [
-            {"min":0, "max":1,"label":"Do you like me?"},
-            {"min":1, "max":10,"label":"How hot am I?"}
-        ]
-        self.widgets =[]
-        for i in x:
-            self.widgets.append(ScaleWidget(master,i["label"],i["min"],i["max"],))
-        for i in self.widgets:
-            i.pack()
+        self.__titlevar = tk.StringVar(self,"Title")
+        self.__title = tk.Label(master,textvariable=self.__titlevar,font=("Helvetica", 16))
+        self.__questionvar =  tk.StringVar(self,"Question")
+        self.__question = tk.Label(master,textvariable=self.__questionvar,anchor=tk.W)
+        self.__answervar =  tk.StringVar(self,"Answer")
+        self.__answer = tk.Label(master,textvariable=self.__answervar,anchor=tk.W)
+        self.__lengthvar =  tk.StringVar(self,"Length")
+        self.__length = tk.Label(master,textvariable=self.__lengthvar,anchor=tk.W)
+        self.q = tk.Label(self,text="Question:",anchor=tk.E)
+        self.a = tk.Label(self,text="Answer:",anchor=tk.E)
+        self.l = tk.Label(self,text="Length:",anchor=tk.E)
+        self.__title.grid(in_=self,row=0,columnspan=2)
+        self.q.grid(in_=self,column=0,row=1)
+        self.__question.grid(in_=self,column=1,row=1)
+        self.a.grid(in_=self,column=0,row=2)
+        self.__answer.grid(in_=self,column=1,row=2)
+        self.l.grid(in_=self,column=0,row=3)
+        self.__length.grid(in_=self,column=1,row=3)
+
+    @property
+    def title(self):
+        return self.__titlevar.get()
+
+    @title.setter
+    def title(self,value):
+        self.__titlevar.set(value)
+
+    @property
+    def question(self):
+        return self.__questionvar.get()
+
+    @question.setter
+    def question(self,value):
+        self.__questionvar.set(value)
+
+    @property
+    def answer(self):
+        return self.__answervar.get()
+
+    @answer.setter
+    def answer(self,value):
+        self.__answervar.set(value)
+        self.__lengthvar.set(" ".join(["Symbols",str(len(self.answer)),"Words",str(len(self.answer.split(" ")))]))
+
+    @property
+    def length(self):
+        return self.__lengthvar.get()
+
+    @length.setter
+    def length(self,value):
+        self.__lengthvar.set(value)
+
+class WidgetField(tk.Frame):
+    def __init__(self, master,criterias):
+        tk.Frame.__init__(self,master)
+        self.criterias = criterias
+        self.widgets = []
+        for i in criterias:
+            self.widgets.append(ScaleWidget(master,i["criteria"],i["min"],i["max"]))
+
+    def show(self):
+        for i,element in enumerate(self.widgets):
+            element.variables[0].grid(column=0,row=i,in_=self)
+        for i,element in enumerate(self.widgets):
+            element.label.grid(column=1,row=i,in_=self)
+        for i,element in enumerate(self.widgets):
+             index = 2
+             for k,j in enumerate(element.variables[1:]):
+                 j.grid(column=index+k,row=i,in_=self)
+
+    def get_res_dict(self):
+        return {element.label.cget('text'):int(element.variables[0].get()) for element in self.widgets}
+
+
+
 
 if __name__ == "__main__":
     root = tk.Tk()
