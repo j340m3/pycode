@@ -25,7 +25,7 @@ class TrueFalseWidget(MyWidget):
         self.labelw.grid(column=2, row=line, sticky=tk.NSEW)
 
 class ScaleWidget(tk.Frame):
-    def __init__(self,master,label,min_,max_,redundancy=1):
+    def __init__(self,master,label,min_,max_,redundancy=0):
         super(ScaleWidget,self).__init__(master)
         self.min = min_
         self.max = max_

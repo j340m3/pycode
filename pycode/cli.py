@@ -1,13 +1,15 @@
 # -*- coding: utf-8 -*-
-
+from pycode.gui.core import MainApplication
+import tkinter as tk
 import click
 
 @click.command()
 def main(args=None): #pragma no cover
     """Console script for pycode"""
-    click.echo("Replace this message by putting your code into "
-               "pycode.cli.main")
-    click.echo("See click documentation at /")
+    root = tk.Tk()
+    MainApplication(root).pack(side="top", fill="both", expand=True)
+    root.geometry("640x480")
+    root.mainloop()
 
 
 if __name__ == "__main__": #pragma no cover

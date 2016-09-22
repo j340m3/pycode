@@ -1,5 +1,6 @@
 import yaml
 import logging
+import os
 from sys import version_info
 if version_info[0] == 2:
     # We are using Python 2.x
@@ -187,14 +188,27 @@ class Main(tk.Frame):
 
         self.infofield = InfoField(self)
         self.infofield.grid(row=0)
+        self.infofield.title = self.title
         self.widgetfield = WidgetField(self,{})
 
         self.current_question_index = 0
         self.current_answerer_index = 0
         self.start()
 
+    def run(self):
+        questions = [i["text"] for i in self.questions]
+        for i,question in enumerate(self.questions):
+            # Collect answers to code
+            coded = []
+            if "out{}.txt".format(i) in os.listdir(os.getcwd()):
+                coded = persistence.obtain("out{}.txt".format(i))
+            for answerer in self.data:
+                for column in answerer:
+                    if column not in questions:
+                        pass
+
+
     def start(self):
-        self.infofield.title = self.title
         # Pick question + solution
 
         # Build and display
@@ -204,15 +218,6 @@ class Main(tk.Frame):
         self.widgetfield = WidgetField(self,self.questions[self.current_question_index]["coding"])
         self.widgetfield.show()
         self.widgetfield.grid(row=1)
-        # self.widgets =[]
-        # for i in x:
-        #     self.widgets.append(ScaleWidget(master,i["label"],i["min"],i["max"]))
-        # for i,element in enumerate(self.widgets):
-        #     element.variables[0].grid(column=0,row=i,in_=self)
-        #     element.label.grid(column=1,row=i,in_=self)
-        #     index = 2
-        #     for k,j in enumerate(element.variables[1:]):
-        #         j.grid(column=index+k,row=i,in_=self)
 
     def get_next(self):
         #store previous
@@ -221,14 +226,16 @@ class Main(tk.Frame):
                   if i not in used}
         sample["question"] = self.questions[self.current_question_index]["text"]
 
-        sample = {**sample,**self.widgetfield.get_res_dict()}
-        persistence.persist("out.txt",sample,"a+")
+        sample.update(self.widgetfield.get_res_dict())
+        print(sample)
+        persistence.persist("out{}.txt".format(self.current_question_index),sample,"a+")
 
-
-        self.current_answerer_index = self.current_answerer_index + 1
+        self.current_answerer_index += 1
         if self.current_answerer_index >= len(self.data):
             self.current_answerer_index = 0
-            self.current_question_index = self.current_question_index + 1
+            self.current_question_index += 1
+        # Check for resumables
+
         if self.current_question_index >= len(self.questions):
             self.infofield.question = "Finished"
             self.infofield.answer = "You may now leave"
@@ -325,7 +332,7 @@ class WidgetField(tk.Frame):
                  j.grid(column=index+k,row=i,in_=self)
 
     def get_res_dict(self):
-        return {element.label.cget('text'):int(element.variables[0].get()) for element in self.widgets}
+        return {element.label.cget('text'):element.variables[0].get() for element in self.widgets}
 
 
 

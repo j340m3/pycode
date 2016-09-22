@@ -1,4 +1,4 @@
-from itertools import (takewhile,repeat)
+from itertools import (takewhile,repeat,zip_longest)
 import os
 
 def obtain(filename):
@@ -7,9 +7,9 @@ def obtain(filename):
         res = []
         for i, line in enumerate(file):
             if i == 0:
-                categories = line.strip().split("\t")
+                categories = list(map(str.strip,line.strip().split("\t")))
             else:
-                res.append(dict(zip(categories, line.strip().split("\t"))))
+                res.append(dict(zip_longest(categories, map(str.strip,line.split("\t")),fillvalue="")))
     return res
 
 def persist(filename,dict,mode="a",split="\t"):
