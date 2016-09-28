@@ -327,9 +327,9 @@ class WidgetField(tk.Frame):
         for i,element in enumerate(self.widgets):
             element.label.grid(column=1,row=i,in_=self)
         for i,element in enumerate(self.widgets):
-             index = 2
-             for k,j in enumerate(element.variables[1:]):
-                 j.grid(column=index+k,row=i,in_=self)
+            index = 2
+            for k,j in enumerate(element.variables[1:]):
+                j.grid(column=index+k,row=i,in_=self)
 
     def get_res_dict(self):
         return {element.label.cget('text'):element.variables[0].get() for element in self.widgets}
