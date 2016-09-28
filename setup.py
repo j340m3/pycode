@@ -21,7 +21,7 @@ test_requirements = [
 setup(
     name='pycode',
     version='0.1.1',
-    description="Python tool for research programmation",
+    description="Python tool for research coding",
     long_description=readme + '\n\n' + history,
     author="Jerome Bergmann",
     author_email='jerome.bergmann@rwth-aachen.de',
@@ -42,7 +42,7 @@ setup(
     classifiers=[
         'Development Status :: 2 - Pre-Alpha',
         'Intended Audience :: Developers',
-        'License :: OSI Approved :: GNU General Public License',
+        'License :: OSI Approved :: GNU General Public License (GPL)',
         'Natural Language :: English',
         "Programming Language :: Python :: 2",
         'Programming Language :: Python :: 2.6',
