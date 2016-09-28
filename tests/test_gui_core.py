@@ -16,6 +16,6 @@ try:
 except ImportError:
     import sys
     e = sys.exc_info()[1]
-    if not "tkinter" in e.message:
+    if not "tkinter" in e.message or not "ttk" in e.message:
         raise
 

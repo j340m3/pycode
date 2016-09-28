@@ -1,4 +1,9 @@
-from itertools import (takewhile,repeat,zip_longest)
+from sys import version_info
+if version_info[0] == 2:
+    from itertools import izip_longest as zip_longest
+elif version_info[0] == 3:
+    from itertools import zip_longest
+from itertools import (takewhile,repeat)
 import os
 
 def obtain(filename):

@@ -6,7 +6,7 @@ if version_info[0] == 2:
     # We are using Python 2.x
     import Tkinter as tk
     import tkFileDialog as filedialog
-    from Tkinter import ttk
+    import ttk
 elif version_info[0] == 3:
     # We are using Python 3.x
     import tkinter as tk
