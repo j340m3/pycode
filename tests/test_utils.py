@@ -195,9 +195,9 @@ class TestDecorator(unittest.TestCase):
         self.assertTrue(issubclass(C,B))
         self.assertTrue(issubclass(C,A))
 
-    class TestLCS(unittest.TestCase):
-        def test_string(self):
-            self.assertEqual(lcs("123123123","352515"),"321")
+class TestLCS(unittest.TestCase):
+    def test_string(self):
+        self.assertEqual(lcs("123123123","352515"),"321")
 
 
 if __name__ == "__main__":
