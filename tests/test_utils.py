@@ -1,6 +1,7 @@
 import unittest
 
 from pycode.utils import Decorator
+from pycode.utils import lcs
 
 
 class TestDecorator(unittest.TestCase):
@@ -193,6 +194,11 @@ class TestDecorator(unittest.TestCase):
         self.assertEqual(C().b(),3)
         self.assertTrue(issubclass(C,B))
         self.assertTrue(issubclass(C,A))
+
+class TestLCS(unittest.TestCase):
+    def test_string(self):
+        self.assertEqual(lcs("123123123","352515"),"321")
+
 
 if __name__ == "__main__":
     unittest.main()

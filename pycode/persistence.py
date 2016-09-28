@@ -1,3 +1,8 @@
+from sys import version_info
+if version_info[0] == 2:
+    from itertools import izip_longest as zip_longest
+elif version_info[0] == 3:
+    from itertools import zip_longest
 from itertools import (takewhile,repeat)
 import os
 
@@ -7,9 +12,9 @@ def obtain(filename):
         res = []
         for i, line in enumerate(file):
             if i == 0:
-                categories = line.strip().split("\t")
+                categories = list(map(str.strip,line.strip().split("\t")))
             else:
-                res.append(dict(zip(categories, line.strip().split("\t"))))
+                res.append(dict(zip_longest(categories, map(str.strip,line.split("\t")),fillvalue="")))
     return res
 
 def persist(filename,dict,mode="a",split="\t"):
