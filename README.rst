@@ -21,6 +21,10 @@ pycode
 .. image:: https://scrutinizer-ci.com/g/j340m3/pycode/badges/quality-score.png?b=master
    :target: https://scrutinizer-ci.com/g/j340m3/pycode/master
    :alt: Scrutinizer Score
+.. image:: https://badge.waffle.io/j340m3/pycode.svg?label=ready&title=Ready 
+   :target: https://waffle.io/j340m3/pycode 
+   :alt: 'Stories in Ready'
+  
 Python tool for potential quadruple blind coding
 
 
