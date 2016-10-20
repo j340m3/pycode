@@ -20,7 +20,7 @@ test_requirements = [
 
 setup(
     name='pycode',
-    version='0.1.1',
+    version='0.1.2',
     description="Python tool for research coding",
     long_description=readme + '\n\n' + history,
     author="Jerome Bergmann",
