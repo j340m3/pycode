@@ -1,16 +1,16 @@
-import yaml
 import logging
 import os
 from sys import version_info
+
+import yaml
+
 if version_info[0] == 2:
     # We are using Python 2.x
     import Tkinter as tk
     import tkFileDialog as filedialog
-    import ttk
 elif version_info[0] == 3:
     # We are using Python 3.x
     import tkinter as tk
-    from tkinter import ttk
     from tkinter import filedialog
 from pycode import persistence, utils
 from pycode.gui.widgets import ScaleWidget
@@ -260,25 +260,29 @@ class Main(tk.Frame):
 
 class InfoField(tk.Frame):
     def __init__(self,master):
+        font = ("serif", 16)
+        padding = 5
         tk.Frame.__init__(self,master)
         self.__titlevar = tk.StringVar(self,"Title")
-        self.__title = tk.Label(master,textvariable=self.__titlevar,font=("Helvetica", 16))
+        self.__title = tk.Label(master, textvariable=self.__titlevar, font=("Helvetica", 18), pady=10)
         self.__questionvar =  tk.StringVar(self,"Question")
-        self.__question = tk.Label(master,textvariable=self.__questionvar,anchor=tk.W)
+        self.__question = tk.Label(master, textvariable=self.__questionvar, anchor=tk.W, font=("serif", 16, "bold"),
+                                   pady=5)
         self.__answervar =  tk.StringVar(self,"Answer")
-        self.__answer = tk.Label(master,textvariable=self.__answervar,anchor=tk.W)
+        self.__answer = tk.Label(master, textvariable=self.__answervar, anchor=tk.W, font=("Times", 16), pady=5,
+                                 relief="groove")
         self.__lengthvar =  tk.StringVar(self,"Length")
-        self.__length = tk.Label(master,textvariable=self.__lengthvar,anchor=tk.W)
-        self.q = tk.Label(self,text="Question:",anchor=tk.E)
-        self.a = tk.Label(self,text="Answer:",anchor=tk.E)
-        self.l = tk.Label(self,text="Length:",anchor=tk.E)
+        self.__length = tk.Label(master, textvariable=self.__lengthvar, anchor=tk.W, font=font, pady=5)
+        self.q = tk.Label(self, text="Question:", anchor=tk.E, font=font, pady=5)
+        self.a = tk.Label(self, text="Answer:", anchor=tk.E, font=font, pady=10)
+        self.l = tk.Label(self, text="Length:", anchor=tk.E, font=font, pady=5)
         self.__title.grid(in_=self,row=0,columnspan=2)
         self.q.grid(in_=self,column=0,row=1)
         self.__question.grid(in_=self,column=1,row=1)
         self.a.grid(in_=self,column=0,row=2)
         self.__answer.grid(in_=self,column=1,row=2)
-        self.l.grid(in_=self,column=0,row=3)
-        self.__length.grid(in_=self,column=1,row=3)
+        # self.l.grid(in_=self,column=0,row=3)
+        # self.__length.grid(in_=self,column=1,row=3)
 
     @property
     def title(self):
